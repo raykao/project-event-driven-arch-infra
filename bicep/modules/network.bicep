@@ -23,7 +23,7 @@ resource workloadNsg 'Microsoft.Network/networkSecurityGroups@2022-01-01' = {
   }
 }
 
-resource hubVent 'Microsoft.Network/virtualNetworks@2022-01-01' = {
+resource hubVnet 'Microsoft.Network/virtualNetworks@2022-01-01' = {
   name: '${prefix}-vnet'
   location: location
   properties: {
@@ -57,6 +57,12 @@ resource hubVent 'Microsoft.Network/virtualNetworks@2022-01-01' = {
           addressPrefix: '10.0.4.0/22'
         }
       }
+      {
+        name: 'privateEndpointSubnet'
+        properties: {
+          addressPrefix: '10.0.8.0/24'
+        }
+      }
     ]
   }
 
@@ -67,7 +73,14 @@ resource hubVent 'Microsoft.Network/virtualNetworks@2022-01-01' = {
   resource aksSubnet 'subnets' existing = {
     name: 'aksSubnet'
   }
+
+  resource privateEndpointSubnet 'subnets' existing = {
+    name: 'privateEndpointSubnet'
+  }
 }
 
-output apimSubnetId string = hubVent::apimSubnet.id
-output aksSubnetId string = hubVent::aksSubnet.id
+output id string = hubVnet.id
+output name string = hubvnet.name
+output apimSubnetId string = hubVnet::apimSubnet.id
+output aksSubnetId string = hubVnet::aksSubnet.id
+output privateEndpointSubnetId string = hubVnet::privateEndpointSubnet.id
